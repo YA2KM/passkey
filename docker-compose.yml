@@ -1,0 +1,9 @@
+version: "2"
+services:
+  node:
+    image: node:19-bullseye
+    ports:
+      - "25566:25566"
+    volumes:
+      - "./:/usr/app"
+    tty: true

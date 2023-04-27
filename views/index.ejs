@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="js">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>home</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.2.1/axios.min.js" integrity="sha512-zJYu9ICC+mWF3+dJ4QC34N9RA0OVS1XtPbnf6oXlvGrLGNB8egsEzu/5wgG90I61hOOKvcywoLzwNmPqGAdATA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://unpkg.com/@simplewebauthn/browser/dist/bundle/index.umd.min.js"></script>
+    <script>
+
+        window.addEventListener('load', () => {
+            const { startRegistration} = SimpleWebAuthnBrowser;
+
+            const registerButton = document.querySelector('#register')
+            registerButton.addEventListener('click', async () => {
+                const resp = await axios.get('/api/getRegistrationOptions')
+                console.log(resp)
+
+                const attResp = await startRegistration(resp.data);
+                console.log(attResp)
+
+                const verificationResp = await axios.post('/api/verification', attResp);
+                const verificationJSON = verificationResp.data
+
+                console.log(verificationResp)
+            })
+
+        })
+    </script>
+</head>
+<body>
+    <h1>home</h1>
+    <p>こんにちは <%= user.name %> さん</p>
+
+    <input type="button" id="register" value="WebAuthnの登録を開始する">
+
+    <a href="/logout">ログアウト</a>
+
+</body>
+</html>

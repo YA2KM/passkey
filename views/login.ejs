@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Login</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.2.1/axios.min.js" integrity="sha512-zJYu9ICC+mWF3+dJ4QC34N9RA0OVS1XtPbnf6oXlvGrLGNB8egsEzu/5wgG90I61hOOKvcywoLzwNmPqGAdATA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://unpkg.com/@simplewebauthn/browser/dist/bundle/index.umd.min.js"></script>
+
+    <script>
+        window.addEventListener('load', () => {
+            const { startAuthentication } = SimpleWebAuthnBrowser;
+            const loginButton = document.querySelector('#login')
+            loginButton.addEventListener('click', async () => {
+                const name = document.querySelector("#name").value
+                const resp = await axios.get('/api/getAuthenticationOptions', {
+                    params: {
+                        name
+                    }
+                })
+                console.log(resp)
+
+                const attResp = await startAuthentication(resp.data);
+                console.log(attResp)
+
+                const authenticationResp = await axios.post('/api/authentication', attResp,  {
+                    withCredentials: true
+                });
+
+
+                window.location.href="/"
+            })
+        })
+    </script>
+</head>
+<body>
+<form method="post">
+    <p>
+        <label>
+            name
+            <input type="text" id="name" name="name">
+        </label>
+    </p>
+    <p>
+        <label>
+            password
+            <input type="password" name="password">
+        </label>
+    </p>
+    <input type="submit">
+</form>
+
+<input type="button" id="login" value="Webauthnでログインする">
+
+<a href="/register" >新規登録</a>
+
+</body>
+</html>
